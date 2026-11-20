@@ -1,0 +1,74 @@
+name: Publish verified Erthi development drafts
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Successful Muslim-Guide functional workflow run ID
+        required: true
+        type: string
+permissions: {}
+concurrency:
+  group: erthi-draft-${{ inputs.run_id }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'Erthi-Org/.github' && github.actor == 'Erthuna' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Validate request
+        shell: bash
+        env:
+          SOURCE_RUN: ${{ inputs.run_id }}
+        run: |
+          [[ "$SOURCE_RUN" =~ ^[1-9][0-9]{5,19}$ ]]
+      - name: Issue token for the approved repository
+        id: app
+        uses: actions/create-github-app-token@v3.2.0
+        with:
+          app-id: '5843464'
+          private-key: ${{ secrets.ERTHI_CLAUDE_APP_PRIVATE_KEY }}
+          owner: Erthi-Org
+          repositories: Muslim-Guide
+          permission-contents: read
+          permission-pull-requests: write
+      - name: Verify cloud run and open draft
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          SOURCE_RUN: ${{ inputs.run_id }}
+        run: |
+          repo=Erthi-Org/Muslim-Guide
+          base=work/android-foundation
+          head="claude/erthi-$SOURCE_RUN"
+
+          # The pilot is public. Read run evidence without granting the app Actions access.
+          curl --fail --silent --show-error \
+            "$GITHUB_API_URL/repos/$repo/actions/runs/$SOURCE_RUN" |
+            jq -e --arg repo "$repo" '
+              .repository.full_name == $repo and
+              .head_repository.full_name == $repo and
+              .path == ".github/workflows/claude-functional-pilot.yml" and
+              .head_branch == "integration/claude-bedrock-cloud-20261119" and
+              .actor.login == "Erthuna" and
+              .event == "push" and
+              .conclusion == "success"
+            ' >/dev/null
+
+          gh api "repos/$repo/compare/$base...$head" |
+            jq -e '
+              .ahead_by == 1 and
+              ([.files[].filename] | sort) ==
+                ["tools/check_apk.py", "tools/test_check_apk_cli.py"]
+            ' >/dev/null
+
+          existing=$(gh pr list --repo "$repo" --head "$head" --base "$base" \
+            --state open --json url --jq '.[0].url // empty')
+          if [[ -n "$existing" ]]; then
+            printf '%s\n' "$existing"
+            exit 0
+          fi
+
+          gh pr create --repo "$repo" --draft --base "$base" --head "$head" \
+            --title 'Validate APK checker command-line arguments' \
+            --body "Isolated test evidence: https://github.com/$repo/actions/runs/$SOURCE_RUN"

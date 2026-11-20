@@ -1,0 +1,77 @@
+{
+  "owner": "Erthi-Org",
+  "authorization": "This inventory proposes rollout targets and does not grant access. Only repositories individually configured and verified may receive cloud tasks.",
+  "pilot": {
+    "repository": "Erthi-Org/Muslim-Guide",
+    "run": "https://github.com/Erthi-Org/Muslim-Guide/actions/runs/44679649692",
+    "draftPullRequest": "https://github.com/Erthi-Org/Muslim-Guide/pull/5"
+  },
+  "repositories": [
+    {
+      "id": "1450189450",
+      "repository": "Erthi-Org/.github",
+      "defaultBranch": "main",
+      "state": "pending-verification"
+    },
+    {
+      "id": "1451257289",
+      "repository": "Erthi-Org/Erthi-AlQuds-Library",
+      "defaultBranch": "main",
+      "state": "pending-verification"
+    },
+    {
+      "id": "1463827281",
+      "repository": "Erthi-Org/Erthi-Amanah",
+      "defaultBranch": "main",
+      "state": "bootstrap-required"
+    },
+    {
+      "id": "1451256491",
+      "repository": "Erthi-Org/Erthi-Living-Manuscript",
+      "defaultBranch": "main",
+      "state": "pending-verification"
+    },
+    {
+      "id": "1457081716",
+      "repository": "Erthi-Org/Erthi-note",
+      "defaultBranch": "main",
+      "state": "bootstrap-required"
+    },
+    {
+      "id": "1451255598",
+      "repository": "Erthi-Org/Erthi-Quran-Education",
+      "defaultBranch": "main",
+      "state": "pending-verification"
+    },
+    {
+      "id": "1452256282",
+      "repository": "Erthi-Org/Erthi-Rahma",
+      "defaultBranch": "main",
+      "state": "pending-verification"
+    },
+    {
+      "id": "1453852569",
+      "repository": "Erthi-Org/Erthi-Survival",
+      "defaultBranch": "main",
+      "state": "pending-verification"
+    },
+    {
+      "id": "1450939880",
+      "repository": "Erthi-Org/Erthi-Web-Platform",
+      "defaultBranch": "main",
+      "state": "pending-verification"
+    },
+    {
+      "id": "1450238018",
+      "repository": "Erthi-Org/Muslim-Guide",
+      "defaultBranch": "main",
+      "state": "pilot-verified"
+    },
+    {
+      "id": "1450239569",
+      "repository": "Erthi-Org/Noor-Al-Basirah",
+      "defaultBranch": "main",
+      "state": "pending-verification"
+    }
+  ]
+}
