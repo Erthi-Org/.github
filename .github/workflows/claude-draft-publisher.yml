@@ -1,8 +1,5 @@
 name: Publish verified Erthi development drafts
 on:
-  push:
-    branches: [integration/claude-repository-rollout]
-    paths: ['.github/workflows/claude-draft-publisher.yml']
   workflow_dispatch:
     inputs:
       run_id:
@@ -11,22 +8,18 @@ on:
         type: string
 permissions: {}
 concurrency:
-  group: erthi-draft-${{ inputs.run_id || '44681415947' }}
+  group: erthi-draft-${{ inputs.run_id }}
   cancel-in-progress: false
 jobs:
   publish:
-    if: >-
-      github.repository == 'Erthi-Org/.github' && github.actor == 'Erthuna' &&
-      ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/integration/claude-repository-rollout' &&
-      github.event.head_commit.message == 'ci: verify new draft creation from the Erthi central publisher' && github.run_attempt == 1))
+    if: github.repository == 'Erthi-Org/.github' && github.actor == 'Erthuna' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Validate request
         shell: bash
         env:
-          SOURCE_RUN: ${{ inputs.run_id || '44681415947' }}
+          SOURCE_RUN: ${{ inputs.run_id }}
         run: |
           [[ "$SOURCE_RUN" =~ ^[1-9][0-9]{5,19}$ ]]
       - name: Issue token for the approved repository
@@ -43,7 +36,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
-          SOURCE_RUN: ${{ inputs.run_id || '44681415947' }}
+          SOURCE_RUN: ${{ inputs.run_id }}
         run: |
           repo=Erthi-Org/Muslim-Guide
           base=work/android-foundation
